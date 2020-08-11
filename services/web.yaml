@@ -1,0 +1,68 @@
+# Web Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rails
+  labels:
+    app: rails
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rails
+  template:
+    metadata:
+      labels:
+        app: rails
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: rails-env-config
+        image: recario/server:latest
+        command: ["bundle"]
+        args: ["exec", "puma", "-C", "config/puma.rb"] # https://github.com/rubygems/bundler/issues/6090 https://github.com/puma/puma/issues/1438
+        name: rails
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 3
+          periodSeconds: 3
+      initContainers:
+        - name: db-create-migrate
+          image: recario/server:latest
+          command: ["bundle", "exec", "rake", "db:create", "db:migrate"]
+          envFrom:
+            - configMapRef:
+                name: rails-env-config
+---
+# Web Load Balancer
+apiVersion: v1
+kind: Service
+metadata:
+  name: rails-lb
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-algorithm: "round_robin"
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "recario"
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "https"
+    service.beta.kubernetes.io/do-loadbalancer-hostname: "recar.io"
+    service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
+spec:
+  type: LoadBalancer
+  selector:
+    app: rails
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+      name: http
+    - protocol: TCP
+      port: 443
+      targetPort: 3000
+      name: https
