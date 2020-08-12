@@ -1,0 +1,31 @@
+# Worker Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: urls
+  labels:
+    app: urls
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: urls
+  template:
+    metadata:
+      labels:
+        app: urls
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: urls-env-config
+        image: recario/urls:latest
+        name: urls
+        command: ["bundle", "exec", "clockwork", "clock.rb"]
+      initContainers:
+        - name: db-create-migrate
+          image: recario/urls:latest
+          command: ["bundle", "exec", "rake", "db:create", "db:migrate"]
+          envFrom:
+            - configMapRef:
+                name: urls-env-config
