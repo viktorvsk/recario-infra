@@ -20,8 +20,8 @@ spec:
         - configMapRef:
             name: rails-env-config
         image: recario/server:latest
-        command: ["bundle"]
-        args: ["exec", "puma", "-C", "config/puma.rb"] # https://github.com/rubygems/bundler/issues/6090 https://github.com/puma/puma/issues/1438
+        command: ["./bin/puma"]
+        args: ["-C", "./config/puma.rb"] # https://github.com/rubygems/bundler/issues/6090 https://github.com/puma/puma/issues/1438
         name: rails
         ports:
         - containerPort: 3000
