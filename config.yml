@@ -13,6 +13,7 @@ data:
   PUMA_PORT: "3000"
   RAILS_ENV: production
   RAILS_LOG_TO_STDOUT: "true"
+  RAILS_LOG_LEVEL: info
   RAILS_SERVE_STATIC_FILES: "true"
   TURBOSMS_LOGIN: recario
   TURBOSMS_SENDER: reCar.io
