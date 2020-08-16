@@ -6,7 +6,7 @@ metadata:
   labels:
     app: rails
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: rails
@@ -26,18 +26,18 @@ spec:
         ports:
         - containerPort: 3000
           protocol: TCP
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 3000
-          initialDelaySeconds: 30
-          periodSeconds: 15
+        # livenessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 3000
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 15
         readinessProbe:
           httpGet:
             path: /health
             port: 3000
-          initialDelaySeconds: 30
-          periodSeconds: 15
+          # initialDelaySeconds: 30
+          periodSeconds: 5
       initContainers:
         - name: db-create-migrate
           image: recario/server:latest
