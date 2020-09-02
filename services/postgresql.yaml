@@ -22,7 +22,7 @@ spec:
             args:
             - /bin/sh
             - -c
-            - pg_dump -Fc -h postgresql -U user -d recario > /var/backups/recario-$(date +%s).sql.dump
+            - cd /var/backups && pg_dump -Fc -h postgresql -U user -d recario > ./recario-$(date +%s).sql.dump && ls -tp | grep -v '/$' | tail -n +6 | xargs -d '\n' -r rm --
             volumeMounts:
               - mountPath: "/var/backups"
                 subPath: "postgres-backups"
