@@ -32,31 +32,19 @@ jobs:
         DO_SPACE_SECRET: ${{ secrets.DO_SPACE_SECRET }}
       run: cat config.yml | envsubst > config.tmp.yml
 
+    - name: Get new kubeconfig
+      run: |
+        mkdir -p $HOME/.kube
+        curl --silent -X GET -H 'Authorization: Bearer ${{ secrets.DO_TOKEN }}' https://api.digitalocean.com/v2/kubernetes/clusters/${{ secrets.K8_ID }}/kubeconfig?expiry_seconds=3600 -o $HOME/.kube/config
+
     - name: Apply config.yml
-      uses: steebchen/kubectl@master
-      env:
-        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-      with:
-        args: apply -f config.tmp.yml
+      run: kubectl apply -f config.tmp.yml
 
     - name: Apply urls-config.yml
-      uses: steebchen/kubectl@master
-      env:
-        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-      with:
-        args: apply -f urls-config.tmp.yml
+      run: kubectl apply -f urls-config.tmp.yml
 
     - name: Apply everything else
-      uses: steebchen/kubectl@master
-      env:
-        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-      with:
-        args: apply -f services
+      run: kubectl apply -f services
 
     - name: Verify deployment
-      uses: steebchen/kubectl@master
-      env:
-        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
-        KUBECTL_VERSION: "1.15"
-      with:
-        args: '"rollout status deployment/rails"'
+      run: kubectl rollout status deployment/rails
