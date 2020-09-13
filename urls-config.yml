@@ -5,11 +5,11 @@ metadata:
   name: urls-env-config
 data:
   CORONA_ENV: production
-  POSTGRES_ADAPTER: postgresql
-  POSTGRES_USER: user
-  POSTGRES_DATABASE: recario_urls
-  POSTGRES_MAX_CONNECTIONS: "5"
+  DATABASE_ADAPTER: postgresql
+  DATABASE_USER: user
+  DATABASE_DATABASE: recario_urls
+  DATABASE_MAX_CONNECTIONS: "5"
   RECARIO_API_HOST: https://recar.io
   # Secrets
   RECARIO_API_TOKEN: ${RECARIO_API_TOKEN}
-  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
