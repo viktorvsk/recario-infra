@@ -6,6 +6,8 @@ metadata:
 data:
   CORONA_ENV: production
   DATABASE_ADAPTER: postgresql
+  DATABASE_HOST: postgresql
+  DATABASE_PORT: "5432"
   DATABASE_USER: user
   DATABASE_DATABASE: recario_urls
   DATABASE_MAX_CONNECTIONS: "5"
